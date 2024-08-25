@@ -1,4 +1,4 @@
-# health_sync
+# Health_Sync
 
 npm install
 
