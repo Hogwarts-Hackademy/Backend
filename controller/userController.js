@@ -45,7 +45,6 @@ module.exports = {
     try {
       const user = await userModule.userCollection.findOne({ username });
       if (!user) {
-        console.log("User not Found");
         return res.status(404).send({ status: "User not found" });
       }
 
