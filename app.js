@@ -1,18 +1,13 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const jwt = require("jsonwebtoken");
+const config = require("./config/config.js");
 const db = require("./database");
 
-// express app
 const app = express();
 
 // CORS support
-const corsOptions = {
-  origin: "http://localhost:3000",
-  credentials: true,
-};
-app.use(cors(corsOptions));
+app.use(cors(config.corsOptions));
 
 // Middleware
 app.use(express.json());
@@ -26,7 +21,7 @@ const userController = require("./controller/userController");
 app.post("/register", userController.create);
 app.post("/login", userController.login);
 app.get("/logout", (req, res) => {
-  res.cookie("token", "", { expires: new Date(0) }); // Clear token cookie
+  res.cookie("token", "", { expires: new Date(0) });
   res.redirect("/login");
 });
 
@@ -37,6 +32,6 @@ app.use((err, req, res, next) => {
 });
 
 // Server
-app.listen(5000, () => {
-  console.log("Server is running on http://localhost:5000");
+app.listen(config.serverPort, () => {
+  console.log(`Server is running on http://localhost:${config.serverPort}`);
 });

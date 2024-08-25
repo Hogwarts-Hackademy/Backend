@@ -1,11 +1,12 @@
 const userModule = require("../module/userModule");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
-const jwtSecret = process.env.JWT_SECRET || "default_secret";
+const config = require("../config/config.js");
 
 const createToken = (username, userid, role) => {
-  return jwt.sign({ username, userid, role }, jwtSecret, { expiresIn: "1h" });
+  return jwt.sign({ username, userid, role }, config.jwtSecret, {
+    expiresIn: "1h",
+  });
 };
 
 module.exports = {

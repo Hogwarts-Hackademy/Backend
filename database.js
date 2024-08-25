@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
+const config = require("./config/config.js");
 
-mongoose.connect("mongodb://127.0.0.1:27017/health-sync");
+mongoose.connect(config.mongoURI);
 
 const con = mongoose.connection;
 
