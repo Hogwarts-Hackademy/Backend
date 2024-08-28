@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const healthSyncDB = require("../databases/healthSyncDatabase");
+const healthSyncDB = require("../../databases/healthSyncDatabase.js");
 
 const patientSchema = mongoose.Schema({
   patientID: { type: String, required: true, unique: true },
@@ -11,7 +11,7 @@ const patientSchema = mongoose.Schema({
     email: String,
     address: String,
   },
-  nationalID: { type: String, unique: true },
+  nationalID: { type: String, required: true },
   medicalHistory: {
     allergies: [String],
     pastSurgeries: [String],
@@ -19,19 +19,22 @@ const patientSchema = mongoose.Schema({
     currentMedications: [String],
   },
   insuranceDetails: {
-    provider: String,
+    insuranceProvider: String,
     policyNumber: String,
     coverageDetails: String,
   },
   emergencyContact: {
     name: String,
     relationship: String,
-    contactInformation: String,
+    contactInformation: {
+      phone: String,
+      email: String,
+    },
   },
   visitHistory: [
     {
-      date: Date,
-      reason: String,
+      dateOfVisit: Date,
+      reasonForVisit: String,
       attendingPhysician: String,
       diagnosticReports: [String],
       prescriptions: [String],

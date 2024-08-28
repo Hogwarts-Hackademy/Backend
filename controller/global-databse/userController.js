@@ -1,7 +1,7 @@
-const userModule = require("../models/userModule.js");
+const userModule = require("../models/userModel.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const config = require("../config/config.js");
+const config = require("../../config/config.js");
 
 const createToken = (username, userid, role) => {
   return jwt.sign({ username, userid, role }, config.jwtSecret, {

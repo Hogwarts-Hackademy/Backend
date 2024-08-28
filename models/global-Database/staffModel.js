@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const healthSyncDB = require("../databases/healthSyncDatabase");
+const healthSyncDB = require("../../databases/healthSyncDatabase.js");
 
 const staffSchema = mongoose.Schema({
   staffID: { type: String, required: true, unique: true },
@@ -11,17 +11,20 @@ const staffSchema = mongoose.Schema({
     email: String,
     address: String,
   },
-  nationalID: { type: String, unique: true },
+  nationalID: { type: String, required: true },
   professionalDetails: {
-    jobTitle: { type: String, required: true },
+    jobTitle: String,
     department: String,
     specialization: String,
     yearsOfExperience: Number,
     licenseNumber: String,
-    schedule: String,
   },
+  scheduleShiftDetails: String,
   employmentHistory: [String],
-  salaryAndBenefits: String,
+  salaryAndBenefits: {
+    salary: Number,
+    benefits: [String],
+  },
 });
 
 const staffCollection = healthSyncDB.model("staff", staffSchema);
