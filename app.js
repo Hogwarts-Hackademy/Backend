@@ -2,9 +2,19 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const config = require("./config/config.js");
-const db = require("./database");
+const globalDB = require("./databases/healthSyncDatabase.js");
+const testDB = require("./databases/testDatabase.js");
 
+//app
 const app = express();
+
+// Import routes
+const hospitalProfileRoutes = require("./routes/hospitalProfileRoutes");
+const userRoutes = require("./routes/userRoutes");
+
+// Use routes
+app.use("/api", hospitalProfileRoutes);
+app.use("/api/users", userRoutes);
 
 // CORS support
 app.use(cors(config.corsOptions));
@@ -13,17 +23,6 @@ app.use(cors(config.corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
-// Controllers
-const userController = require("./controller/userController");
-
-// Routes
-app.post("/register", userController.create);
-app.post("/login", userController.login);
-app.get("/logout", (req, res) => {
-  res.cookie("token", "", { expires: new Date(0) });
-  res.redirect("/login");
-});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
