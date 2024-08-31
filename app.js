@@ -16,10 +16,10 @@ const hospitalProfileRoutes = require("./routes/hospitalProfileRoutes.js");
 const userRoutes = require("./routes/userRoutes.js");
 
 // Routes
-app.use("/api", hospitalProfileRoutes);
-app.use("/api", patientRoutes);
-app.use("/api", userRoutes);
-app.use("/api", staffRoutes);
+app.use("/api/hospital", hospitalProfileRoutes);
+app.use("/api/patient", patientRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/staff", staffRoutes);
 
 // CORS support
 app.use(cors(config.corsOptions));
