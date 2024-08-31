@@ -7,14 +7,19 @@ const testDB = require("./databases/testDatabase.js");
 
 //app
 const app = express();
+app.use(express.json());
 
 // Import routes
-const hospitalProfileRoutes = require("./routes/hospitalProfileRoutes");
-const userRoutes = require("./routes/userRoutes");
+const patientRoutes = require("./routes/patientRoutes");
+const staffRoutes = require("./routes/staffRoutes");
+const hospitalProfileRoutes = require("./routes/hospitalProfileRoutes.js");
+const userRoutes = require("./routes/userRoutes.js");
 
-// Use routes
+// Routes
 app.use("/api", hospitalProfileRoutes);
-app.use("/api/users", userRoutes);
+app.use("/api", patientRoutes);
+app.use("/api", userRoutes);
+app.use("/api", staffRoutes);
 
 // CORS support
 app.use(cors(config.corsOptions));

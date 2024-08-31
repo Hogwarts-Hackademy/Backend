@@ -1,6 +1,6 @@
 const {
   hospitalProfileCollection,
-} = require("../models/hospitalProfileSchema");
+} = require("../../models/global-Database/hospitalProfileModel");
 
 module.exports = {
   createHospitalProfile: async (req, res) => {

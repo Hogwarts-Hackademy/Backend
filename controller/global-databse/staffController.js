@@ -1,4 +1,4 @@
-const { staffCollection } = require("../models/staffSchema");
+const { staffCollection } = require("../../models/global-Database/staffModel");
 
 module.exports = {
   createStaff: async (req, res) => {
