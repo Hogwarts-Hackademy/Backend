@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const hospitalProfileController = require("../controller/global-databse/hospitalProfileController");
+const hospitalProfileController = require("../controller/hospitalProfileController");
 
 router.post(
   "/hospital-profiles",

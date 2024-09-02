@@ -1,10 +1,7 @@
 const mongoose = require("mongoose");
 const config = require("../config/config.js");
 
-mongoose.connect(config.GlobalDbmongoURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect(config.GlobalDbmongoURI);
 
 const con = mongoose.connection;
 

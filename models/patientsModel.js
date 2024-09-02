@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const healthSyncDB = require("../../databases/healthSyncDatabase.js");
+const healthSyncDB = require("../databases/healthSyncDatabase.js");
 
 const patientSchema = mongoose.Schema({
   patientID: { type: String, required: true, unique: true },

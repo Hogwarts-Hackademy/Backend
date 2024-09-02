@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const patientController = require("../controller/global-databse/patientController");
+const patientController = require("../controller/patientController");
 
 router.post("/patients", patientController.createPatient);
 

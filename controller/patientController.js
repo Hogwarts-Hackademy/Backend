@@ -1,6 +1,4 @@
-const {
-  patientCollection,
-} = require("../../models/global-Database/patientsModel");
+const { patientCollection } = require("../models/patientsModel");
 
 module.exports = {
   createPatient: async (req, res) => {

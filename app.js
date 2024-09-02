@@ -3,7 +3,6 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const config = require("./config/config.js");
 const globalDB = require("./databases/healthSyncDatabase.js");
-const testDB = require("./databases/testDatabase.js");
 
 //app
 const app = express();

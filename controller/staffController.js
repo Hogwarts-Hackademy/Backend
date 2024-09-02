@@ -1,4 +1,4 @@
-const { staffCollection } = require("../../models/global-Database/staffModel");
+const { staffCollection } = require("../models/staffModel");
 
 module.exports = {
   addStaff: async (req, res) => {
