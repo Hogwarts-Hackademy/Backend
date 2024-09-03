@@ -34,10 +34,8 @@ const patientSchema = mongoose.Schema({
   visitHistory: [
     {
       dateOfVisit: Date,
-      reasonForVisit: String,
       attendingPhysician: String,
-      diagnosticReports: [String],
-      prescriptions: [String],
+      prescriptions: Object,
     },
   ],
 });

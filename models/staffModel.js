@@ -17,7 +17,6 @@ const staffSchema = mongoose.Schema({
     yearsOfExperience: { type: Number, required: true }, // Matches 'Years of Experience' in the form
     licenseNumber: { type: String, required: true }, // Matches 'License Number' in the form
   },
-  scheduleShiftDetails: { type: String },
 });
 
 const staffCollection = healthSyncDB.model("staff", staffSchema);
