@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const healthSyncDB = require("../databases/healthSyncDatabase");
 
 const patientSchema = mongoose.Schema({
   patientID: { type: String, required: true, unique: true },
@@ -11,7 +10,7 @@ const patientSchema = mongoose.Schema({
     email: String,
     address: String,
   },
-  nationalID: { type: String, unique: true },
+  nationalID: { type: String, required: true },
   medicalHistory: {
     allergies: [String],
     pastSurgeries: [String],
@@ -19,32 +18,27 @@ const patientSchema = mongoose.Schema({
     currentMedications: [String],
   },
   insuranceDetails: {
-    provider: String,
+    insuranceProvider: String,
     policyNumber: String,
     coverageDetails: String,
   },
   emergencyContact: {
     name: String,
     relationship: String,
-    contactInformation: String,
+    contactInformation: {
+      phone: String,
+      email: String,
+    },
   },
   visitHistory: [
     {
-      date: Date,
-      reason: String,
+      dateOfVisit: Date,
       attendingPhysician: String,
-      diagnosticReports: [String],
-      prescriptions: [String],
+      prescriptions: String,
     },
   ],
 });
 
-const patientCollection = healthSyncDB.model("patients", patientSchema);
+const patientCollection = mongoose.model("patients", patientSchema);
 
-module.exports = {
-  patientCollection,
-  create: (field) => {
-    const patient = new patientCollection(field);
-    return patient.save();
-  },
-};
+module.exports = { patientCollection };
