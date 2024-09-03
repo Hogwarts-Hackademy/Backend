@@ -1,4 +1,4 @@
-const { patientCollection } = require("../models/patientsModel");
+const { patientCollection } = require("../models/patientModel");
 
 module.exports = {
   // Function to create a new patient

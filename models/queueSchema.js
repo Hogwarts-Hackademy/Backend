@@ -1,5 +1,4 @@
 import { Schema, model } from "mongoose";
-import healthSyncDB from "../databases/healthSyncDatabase";
 
 const queueSchema = Schema({
   department: { type: String, required: true },

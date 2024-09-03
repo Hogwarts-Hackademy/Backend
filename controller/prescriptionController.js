@@ -68,3 +68,19 @@ module.exports.addNotesToPrescription = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+// Get a specific prescription by patient ID
+module.exports.getPrescriptionByPatientId = async (req, res) => {
+  try {
+    const { patientId } = req.params;
+    const prescription = await prescriptionCollection.findOne({ patientId });
+
+    if (!prescription) {
+      return res.status(404).json({ error: "Prescription not found" });
+    }
+
+    res.status(200).json({ data: prescription });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};

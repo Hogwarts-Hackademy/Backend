@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const healthSyncDB = require("../databases/healthSyncDatabase.js");
 
 const staffSchema = mongoose.Schema({
   fullName: { type: String, required: true },
@@ -19,6 +18,6 @@ const staffSchema = mongoose.Schema({
   },
 });
 
-const staffCollection = healthSyncDB.model("staff", staffSchema);
+const staffCollection = mongoose.model("staff", staffSchema);
 
 module.exports = { staffCollection };

@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const config = require("./config/config.js");
+
 const globalDB = require("./databases/healthSyncDatabase.js");
 
 //app
@@ -13,12 +14,16 @@ const patientRoutes = require("./routes/patientRoutes");
 const staffRoutes = require("./routes/staffRoutes");
 const hospitalProfileRoutes = require("./routes/hospitalProfileRoutes.js");
 const userRoutes = require("./routes/userRoutes.js");
+const opdQueueRoutes = require("./routes/opdQueueRoutes.js");
+const prescriptionRoutes = require("./routes/prescriptionRoutes.js");
 
 // Routes
 app.use("/api/hospital", hospitalProfileRoutes);
 app.use("/api/patient", patientRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/staff", staffRoutes);
+app.use("/api/routes/opd", opdQueueRoutes);
+app.use("/api/prescription", prescriptionRoutes);
 
 // CORS support
 app.use(cors(config.corsOptions));

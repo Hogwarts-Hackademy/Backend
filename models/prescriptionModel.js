@@ -37,15 +37,11 @@ const prescriptionSchema = new mongoose.Schema({
 });
 
 // Create the Prescription model
-const prescriptionCollection = mongoose.model(
+const prescriptionCollection = healthSyncDB.model(
   "Prescription",
   prescriptionSchema
 );
 
 module.exports = {
   prescriptionCollection,
-  createPrescription: (field) => {
-    const prescription = new prescriptionCollection(field);
-    return prescription.save();
-  },
 };

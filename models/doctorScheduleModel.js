@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const healthSyncDB = require("../databases/healthSyncDatabase");
 
 const doctorScheduleSchema = mongoose.Schema({
   doctorId: {

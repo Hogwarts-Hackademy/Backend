@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const healthSyncDB = require("../databases/healthSyncDatabase");
 
 const hospitalProfileSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -54,7 +53,7 @@ const hospitalProfileSchema = new mongoose.Schema({
   },
 });
 
-const hospitalProfileCollection = healthSyncDB.model(
+const hospitalProfileCollection = mongoose.model(
   "hospital_profiles",
   hospitalProfileSchema
 );

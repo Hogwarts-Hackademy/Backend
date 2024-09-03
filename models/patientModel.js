@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const healthSyncDB = require("../databases/healthSyncDatabase.js");
 
 const patientSchema = mongoose.Schema({
   patientID: { type: String, required: true, unique: true },
@@ -35,11 +34,11 @@ const patientSchema = mongoose.Schema({
     {
       dateOfVisit: Date,
       attendingPhysician: String,
-      prescriptions: Object,
+      prescriptions: String,
     },
   ],
 });
 
-const patientCollection = healthSyncDB.model("patients", patientSchema);
+const patientCollection = mongoose.model("patients", patientSchema);
 
 module.exports = { patientCollection };
