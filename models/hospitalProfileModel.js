@@ -61,8 +61,4 @@ const hospitalProfileCollection = healthSyncDB.model(
 
 module.exports = {
   hospitalProfileCollection,
-  create: (field) => {
-    const profile = new hospitalProfileCollection(field);
-    return profile.save();
-  },
 };

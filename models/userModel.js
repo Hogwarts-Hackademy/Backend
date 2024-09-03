@@ -11,8 +11,4 @@ const userCollection = mongoose.model("users", userSchema);
 
 module.exports = {
   userCollection,
-  create: (field) => {
-    const user = new userCollection(field);
-    return user.save();
-  },
 };

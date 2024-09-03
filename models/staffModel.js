@@ -24,8 +24,4 @@ const staffCollection = healthSyncDB.model("staff", staffSchema);
 
 module.exports = {
   staffCollection,
-  create: (field) => {
-    const staff = new staffCollection(field);
-    return staff.save();
-  },
 };

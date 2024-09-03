@@ -46,8 +46,4 @@ const patientCollection = healthSyncDB.model("patients", patientSchema);
 
 module.exports = {
   patientCollection,
-  create: (field) => {
-    const patient = new patientCollection(field);
-    return patient.save();
-  },
 };
