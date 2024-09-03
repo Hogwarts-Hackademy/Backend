@@ -55,9 +55,15 @@ module.exports = {
 			// Return created profile
 			res.status(201).json(profile);
 		} catch (error) {
-			// Log the error and return a response
-			console.error("Error creating hospital profile:", error);
-			res.status(500).json({ error: "Internal Server Error" });
+			if (error.code === 11000) {
+				// Handle duplicate key error
+				res.status(400).json({
+					error: "Hospital ID already exists. Please use a different ID.",
+				});
+			} else {
+				// Handle other errors
+				res.status(400).json({ error: error.message });
+			}
 		}
 	},
 
