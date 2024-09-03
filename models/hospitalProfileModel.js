@@ -59,6 +59,4 @@ const hospitalProfileCollection = healthSyncDB.model(
   hospitalProfileSchema
 );
 
-module.exports = {
-  hospitalProfileCollection,
-};
+module.exports = { hospitalProfileCollection };

@@ -22,6 +22,4 @@ const staffSchema = mongoose.Schema({
 
 const staffCollection = healthSyncDB.model("staff", staffSchema);
 
-module.exports = {
-  staffCollection,
-};
+module.exports = { staffCollection };

@@ -9,6 +9,4 @@ const userSchema = mongoose.Schema({
 
 const userCollection = mongoose.model("users", userSchema);
 
-module.exports = {
-  userCollection,
-};
+module.exports = { userCollection };

@@ -44,6 +44,4 @@ const patientSchema = mongoose.Schema({
 
 const patientCollection = healthSyncDB.model("patients", patientSchema);
 
-module.exports = {
-  patientCollection,
-};
+module.exports = { patientCollection };
