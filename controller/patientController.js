@@ -12,7 +12,13 @@ module.exports = {
 
       res.status(201).json(patient);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+        if (error.code === 11000) {
+            // Handle duplicate key error
+            res.status(400).json({ error: "Patient ID already exists. Please use a different ID." });
+          } else {
+            // Handle other errors
+            res.status(400).json({ error: error.message });
+          }
     }
   },
 
