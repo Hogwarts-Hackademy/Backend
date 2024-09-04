@@ -39,6 +39,10 @@ app.use((err, req, res, next) => {
   res.status(500).send("Something went wrong!");
 });
 
+app.get("/", (req, res) => {
+  res.render("index.ejs");
+});
+
 // Server
 app.listen(config.serverPort, config.serverHost, () => {
   console.log(
