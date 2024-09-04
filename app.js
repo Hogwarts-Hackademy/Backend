@@ -40,6 +40,8 @@ app.use((err, req, res, next) => {
 });
 
 // Server
-app.listen(config.serverPort, () => {
-  console.log(`Server is running on http://localhost:${config.serverPort}`);
+app.listen(config.serverPort, config.serverHost, () => {
+  console.log(
+    `Server is running on http://${config.serverHost}:${config.serverPort}`
+  );
 });

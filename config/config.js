@@ -5,8 +5,11 @@ const config = {
   testDbmongoURI: process.env.MONGO_URI || "mongodb://127.0.0.1:27017/test",
   corsOptions: {
     origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
   },
+
+  serverHost: process.env.HOST || "127.0.0.1",
   serverPort: process.env.PORT || 5000,
 };
 
