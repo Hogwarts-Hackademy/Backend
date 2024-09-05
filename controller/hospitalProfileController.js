@@ -67,5 +67,38 @@ module.exports = {
 		}
 	},
 
-	// Add other controller methods as needed
+	getHospitalProfile: async (req, res) => {
+		const { hospitalID } = req.query; // Assuming hospitalID is passed as a route parameter
+
+		try {
+			const profile = await hospitalProfileCollection.findOne({
+				hospitalID,
+			});
+
+			if (!profile) {
+				return res
+					.status(404)
+					.json({ error: "Hospital profile not found." });
+			}
+
+			res.status(200).json(profile);
+		} catch (error) {
+			res.status(500).json({
+				error: "An error occurred while fetching the hospital profile.",
+			});
+		}
+	},
+
+	// Function to get all hospital profiles
+	getAllHospitalProfiles: async (req, res) => {
+		try {
+			const profiles = await hospitalProfileCollection.find({});
+
+			res.status(200).json(profiles);
+		} catch (error) {
+			res.status(500).json({
+				error: "An error occurred while fetching hospital profiles.",
+			});
+		}
+	},
 };
