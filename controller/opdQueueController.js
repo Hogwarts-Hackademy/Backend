@@ -43,55 +43,57 @@ const adjustToIST = (date) => {
 
 // Function to add a new patient visit and generate a token
 
-module.exports.addPatientVisit = async (req, res) => {
-  try {
-    const { patientID, department } = req.body;
+module.exports = {
+  addPatientVisit: async (req, res) => {
+    try {
+      const { patientID, department } = req.body;
 
-    const patient = await patientCollection.findOne({ patientID });
-    if (!patient) {
-      return res.status(404).json({ error: "Patient not found" });
-    }
+      const patient = await patientCollection.findOne({ patientID });
+      if (!patient) {
+        return res.status(404).json({ error: "Patient not found" });
+      }
 
-    const tokenNumber = await generateTokenForDepartment(department);
-    const physician = await assignPhysician(department);
+      const tokenNumber = await generateTokenForDepartment(department);
+      const physician = await assignPhysician(department);
 
-    const newPrescription = {
-      prescriptionID: uuidv4(), // Generate a unique prescription ID
-      patientId: patient._id,
-      patientName: patient.fullName,
-      visitDate: adjustToIST(new Date()), // Set the current date and time
-      department,
-      physician,
-      tokenNumber,
-    };
+      const newPrescription = {
+        prescriptionID: uuidv4(), // Generate a unique prescription ID
+        patientId: patient._id,
+        patientName: patient.fullName,
+        visitDate: adjustToIST(new Date()), // Set the current date and time
+        department,
+        physician,
+        tokenNumber,
+      };
 
-    const prescription = await prescriptionCollection.create(newPrescription);
+      const prescription = await prescriptionCollection.create(newPrescription);
 
-    patient.visitHistory.push({
-      dateOfVisit: newPrescription.visitDate,
-      attendingPhysician: newPrescription.physician,
-      prescriptions: prescription.prescriptionID,
-    });
+      patient.visitHistory.push({
+        dateOfVisit: newPrescription.visitDate,
+        attendingPhysician: newPrescription.physician,
+        prescriptions: prescription.prescriptionID,
+      });
 
-    await patient.save();
+      await patient.save();
 
-    await departmentQueueCollection.findOneAndUpdate(
-      { department },
-      {
-        $push: {
-          tokens: {
-            tokenNumber,
-            patientId: patient._id,
-            physician,
-            status: "Waiting",
+      await departmentQueueCollection.findOneAndUpdate(
+        { department },
+        {
+          $push: {
+            tokens: {
+              tokenNumber,
+              patientId: patient._id,
+              physician,
+              status: "Waiting",
+            },
           },
         },
-      },
-      { new: true, upsert: true }
-    );
+        { new: true, upsert: true }
+      );
 
-    res.status(201).json({ data: prescription });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
+      res.status(201).json({ data: prescription });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
 };
