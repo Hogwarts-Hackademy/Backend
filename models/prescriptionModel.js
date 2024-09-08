@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const healthSyncDB = require("../databases/healthSyncDatabase");
 
 // Define the Prescription schema
 const prescriptionSchema = new mongoose.Schema({
@@ -38,11 +37,9 @@ const prescriptionSchema = new mongoose.Schema({
 });
 
 // Create the Prescription model
-const prescriptionCollection = healthSyncDB.model(
+const prescriptionCollection = mongoose.model(
   "Prescription",
   prescriptionSchema
 );
 
-module.exports = {
-  prescriptionCollection,
-};
+module.exports = { prescriptionCollection };

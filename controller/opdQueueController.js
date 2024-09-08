@@ -4,12 +4,14 @@ const { prescriptionCollection } = require("../models/prescriptionModel");
 const {
   departmentQueueCollection,
 } = require("../models/departmentOpdQueueSchema");
-const { v4: uuidv4 } = require("uuid");
+const { convertToIST } = require("../functions/timestampConverter");
 
 // Function to generate a token for the department
 const generateTokenForDepartment = async (department) => {
   // Find the department queue
-  let departmentQueue = await departmentQueueCollection.findOne({ department });
+  let departmentQueue = await departmentQueueCollection.findOne({
+    department,
+  });
 
   if (!departmentQueue) {
     // If no queue exists, create a new queue with the first token
@@ -42,58 +44,59 @@ const adjustToIST = (date) => {
 };
 
 // Function to add a new patient visit and generate a token
+module.exports.addPatientVisit = async (req, res) => {
+  try {
+    const { patientID, department } = req.body;
+    const visitDate = Date.now();
+    const patient = await patientCollection.findOne({ patientID });
+    if (!patient) {
+      return res.status(404).json({ error: "Patient not found" });
+    }
+    const tokenNumber = await generateTokenForDepartment(department);
+    const physician = await assignPhysician(department);
 
-module.exports = {
-  addPatientVisit: async (req, res) => {
-    try {
-      const { patientID, department } = req.body;
+    const newPrescription = {
+      patientId: patient._id,
+      patientName: patient.fullName,
+      visitDate,
+      department,
+      physician,
+      tokenNumber,
+    };
 
-      const patient = await patientCollection.findOne({ patientID });
-      if (!patient) {
-        return res.status(404).json({ error: "Patient not found" });
-      }
+    const prescription = await prescriptionCollection.create(newPrescription);
 
-      const tokenNumber = await generateTokenForDepartment(department);
-      const physician = await assignPhysician(department);
+    patient.visitHistory.push({
+      dateOfVisit: visitDate,
+      attendingPhysician: physician,
+      prescriptions: prescription._id,
+    });
 
-      const newPrescription = {
-        prescriptionID: uuidv4(), // Generate a unique prescription ID
-        patientId: patient._id,
-        patientName: patient.fullName,
-        visitDate: adjustToIST(new Date()), // Set the current date and time
-        department,
-        physician,
-        tokenNumber,
-      };
+    await patient.save();
 
-      const prescription = await prescriptionCollection.create(newPrescription);
-
-      patient.visitHistory.push({
-        dateOfVisit: newPrescription.visitDate,
-        attendingPhysician: newPrescription.physician,
-        prescriptions: prescription.prescriptionID,
-      });
-
-      await patient.save();
-
-      await departmentQueueCollection.findOneAndUpdate(
-        { department },
-        {
-          $push: {
-            tokens: {
-              tokenNumber,
-              patientId: patient._id,
-              physician,
-              status: "Waiting",
-            },
+    await departmentQueueCollection.findOneAndUpdate(
+      { department },
+      {
+        $push: {
+          tokens: {
+            tokenNumber,
+            patientId: patient._id,
+            physician,
+            status: "Waiting",
           },
         },
-        { new: true, upsert: true }
-      );
+      },
+      { new: true, upsert: true }
+    );
 
-      res.status(201).json({ data: prescription });
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-  },
+    // Manually select only the required fields for the response
+    const responsePrescription = {
+      ...prescription.toObject(), // Convert Mongoose document to plain JavaScript object
+      visitDate: convertToIST(prescription.visitDate), // Convert to IST
+    };
+
+    res.status(201).json(responsePrescription);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 };
