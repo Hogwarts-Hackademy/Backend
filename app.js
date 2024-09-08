@@ -2,8 +2,11 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const config = require("./config/config.js");
-
+const cron = require("node-cron");
 const globalDB = require("./databases/healthSyncDatabase.js");
+
+//helper
+const { deleteOldAppointments } = require("./helper/deleteApoinment.js");
 
 //app
 const app = express();
@@ -29,6 +32,19 @@ app.use("/api/appointments", appointmentRoutes);
 
 // CORS support
 app.use(cors(config.corsOptions));
+
+// Schedule the job to run at 12 AM daily
+cron.schedule(
+  "0 0 * * *",
+  () => {
+    console.log("Running daily cleanup of old appointments...");
+    deleteOldAppointments();
+  },
+  {
+    scheduled: true,
+    timezone: "Asia/Kolkata", // Use the appropriate timezone
+  }
+);
 
 // Middleware
 app.use(express.json());
