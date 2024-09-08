@@ -16,6 +16,7 @@ const hospitalProfileRoutes = require("./routes/hospitalProfileRoutes.js");
 const userRoutes = require("./routes/userRoutes.js");
 const opdQueueRoutes = require("./routes/opdQueueRoutes.js");
 const prescriptionRoutes = require("./routes/prescriptionRoutes.js");
+const appointmentRoutes = require("./routes/appointmentRoutes.js");
 
 // Routes
 app.use("/api/hospital", hospitalProfileRoutes);
@@ -24,6 +25,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/staff", staffRoutes);
 app.use("/api/routes/opd", opdQueueRoutes);
 app.use("/api/prescription", prescriptionRoutes);
+app.use("/api/appointments", appointmentRoutes);
 
 // CORS support
 app.use(cors(config.corsOptions));
