@@ -1,5 +1,5 @@
 const { staffCollection } = require("../models/staffModel");
-
+const { hospitalProfileCollection } = require("../models/hospitalProfileModel");
 module.exports = {
   addStaff: async (req, res) => {
     try {
@@ -11,6 +11,8 @@ module.exports = {
         contactInformation,
         nationalID,
         professionalDetails,
+        staffType,
+        hospitalID,
       } = req.body;
 
       const staff = await staffCollection.create({
@@ -21,6 +23,8 @@ module.exports = {
         contactInformation,
         nationalID,
         professionalDetails,
+        staffType,
+        hospitalID,
       });
 
       res.status(201).json(staff);
@@ -45,7 +49,58 @@ module.exports = {
         return res.status(404).json({ error: "Staff not found." });
       }
 
-      res.status(200).json(staff);
+      // Only returning relevant fields including scheduling information if present
+      res.status(200).json({
+        fullName: staff.fullName,
+        department: staff.professionalDetails.department,
+        hospitalID: staff.hospitalID,
+        staffType: staff.staffType,
+        scheduling: staff.scheduling || null,
+      });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  addSchedulingToStaff: async (req, res) => {
+    try {
+      const { staffID, scheduling } = req.body;
+
+      const staff = await staffCollection.findOneAndUpdate(
+        { staffID },
+        { $set: { scheduling } },
+        { new: true, upsert: true }
+      );
+
+      if (!staff) {
+        return res.status(404).json({ error: "Staff not found." });
+      }
+
+      res.status(200).json({ data: staff });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+
+  getScheduling: async (req, res) => {
+    try {
+      const { staffID } = req.query;
+
+      if (!staffID) {
+        return res.status(400).json({
+          error: "Staff ID is required to fetch the schedule.",
+        });
+      }
+
+      const staff = await staffCollection.findOne({ staffID });
+
+      if (!staff) {
+        return res.status(404).json({ error: "Staff not found." });
+      }
+
+      res.status(200).json({
+        schedule: staff.scheduling || null, // Return schedule if available
+      });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
