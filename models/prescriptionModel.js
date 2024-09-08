@@ -3,6 +3,7 @@ const healthSyncDB = require("../databases/healthSyncDatabase");
 
 // Define the Prescription schema
 const prescriptionSchema = new mongoose.Schema({
+  prescriptionID: { type: String, required: true, unique: true }, // Custom ID field
   patientId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Patient",

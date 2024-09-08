@@ -1,8 +1,10 @@
+const moment = require("moment-timezone");
 const { patientCollection } = require("../models/patientModel");
 const { prescriptionCollection } = require("../models/prescriptionModel");
 const {
   departmentQueueCollection,
 } = require("../models/departmentOpdQueueSchema");
+const { v4: uuidv4 } = require("uuid");
 
 // Function to generate a token for the department
 const generateTokenForDepartment = async (department) => {
@@ -34,22 +36,30 @@ const assignPhysician = async (department) => {
   return "Dr. John Doe"; // Replace with actual logic
 };
 
+// Function to adjust visit date to IST
+const adjustToIST = (date) => {
+  return moment(date).tz("Asia/Kolkata").format(); // Convert to IST and format as ISO string
+};
+
 // Function to add a new patient visit and generate a token
+
 module.exports.addPatientVisit = async (req, res) => {
   try {
-    const { patientID, visitDate, department } = req.body;
+    const { patientID, department } = req.body;
 
     const patient = await patientCollection.findOne({ patientID });
     if (!patient) {
       return res.status(404).json({ error: "Patient not found" });
     }
+
     const tokenNumber = await generateTokenForDepartment(department);
     const physician = await assignPhysician(department);
 
     const newPrescription = {
+      prescriptionID: uuidv4(), // Generate a unique prescription ID
       patientId: patient._id,
       patientName: patient.fullName,
-      visitDate,
+      visitDate: adjustToIST(new Date()), // Set the current date and time
       department,
       physician,
       tokenNumber,
@@ -58,9 +68,9 @@ module.exports.addPatientVisit = async (req, res) => {
     const prescription = await prescriptionCollection.create(newPrescription);
 
     patient.visitHistory.push({
-      dateOfVisit: visitDate,
-      attendingPhysician: physician,
-      prescriptions: prescription._id,
+      dateOfVisit: newPrescription.visitDate,
+      attendingPhysician: newPrescription.physician,
+      prescriptions: prescription.prescriptionID,
     });
 
     await patient.save();
