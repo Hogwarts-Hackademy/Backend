@@ -16,19 +16,21 @@ app.use(express.json());
 const patientRoutes = require("./routes/patientRoutes");
 const staffRoutes = require("./routes/staffRoutes");
 const hospitalProfileRoutes = require("./routes/hospitalProfileRoutes.js");
-const userRoutes = require("./routes/userRoutes.js");
+const staffUserRoutes = require("./routes/staffUserRoutes.js");
 const opdQueueRoutes = require("./routes/opdQueueRoutes.js");
 const prescriptionRoutes = require("./routes/prescriptionRoutes.js");
 const appointmentRoutes = require("./routes/appointmentRoutes.js");
+const userRoutes = require("./routes/userRoutes.js");
 
 // Routes
 app.use("/api/hospital", hospitalProfileRoutes);
 app.use("/api/patient", patientRoutes);
-app.use("/api/user", userRoutes);
+app.use("/api/staff-user", staffUserRoutes);
 app.use("/api/staff", staffRoutes);
 app.use("/api/routes/opd", opdQueueRoutes);
 app.use("/api/prescription", prescriptionRoutes);
 app.use("/api/appointments", appointmentRoutes);
+app.use("/api/auth", userRoutes);
 
 // CORS support
 app.use(cors(config.corsOptions));

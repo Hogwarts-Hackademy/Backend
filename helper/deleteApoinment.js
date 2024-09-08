@@ -15,4 +15,4 @@ const deleteOldAppointments = async () => {
   }
 };
 
-module.exports = deleteOldAppointments; // Export the function to be used elsewhere
+module.exports = deleteOldAppointments;
