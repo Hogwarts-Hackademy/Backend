@@ -100,3 +100,52 @@ module.exports.addPatientVisit = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+// Function to fetch current and next token number details
+// Function to fetch the current and next token details
+module.exports.fetchQueueDetails = async (req, res) => {
+  try {
+    const { department } = req.query;
+    if (!department) {
+      return res.status(400).json({ error: "Department is required" });
+    }
+
+    // Find the department queue
+    const departmentQueue = await departmentQueueCollection.findOne({
+      department,
+    });
+
+    if (!departmentQueue) {
+      return res.status(404).json({ error: "Department not found" });
+    }
+
+    // Fetch tokens with status "In Progress"
+    const inProgressToken = departmentQueue.tokens.find(
+      (token) => token.status === "In Progress"
+    );
+
+    // Fetch the next token in line or the first "Waiting" token if none are "In Progress"
+    let nextToken;
+    if (inProgressToken) {
+      nextToken = departmentQueue.tokens.find(
+        (token) => token.tokenNumber === inProgressToken.tokenNumber + 1
+      );
+    }
+
+    if (!nextToken) {
+      nextToken = departmentQueue.tokens.find(
+        (token) => token.status === "Waiting"
+      );
+    }
+
+    // Prepare response data
+    const response = {
+      currentToken: inProgressToken || null,
+      nextToken: nextToken || null,
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

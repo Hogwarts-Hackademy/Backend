@@ -7,6 +7,7 @@ const globalDB = require("./databases/healthSyncDatabase.js");
 
 //helper
 const { deleteOldAppointments } = require("./helper/deleteApoinment.js");
+const { resetQueues } = require("./helper/resetQueue.js");
 
 //app
 const app = express();
@@ -47,6 +48,11 @@ cron.schedule(
     timezone: "Asia/Kolkata", // Use the appropriate timezone
   }
 );
+
+cron.schedule("0 0 * * *", () => {
+  console.log("Running scheduled task to reset department queues.");
+  resetQueues();
+});
 
 // Middleware
 app.use(express.json());
