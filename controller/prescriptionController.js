@@ -76,7 +76,7 @@ const adjustToIST = (date) => {
 };
 
 // Get a specific prescription by patient ID
-module.exports.getPatientVisit = async (req, res) => {
+module.exports.fetchPrescription = async (req, res) => {
   try {
     const { prescriptionID } = req.query;
 

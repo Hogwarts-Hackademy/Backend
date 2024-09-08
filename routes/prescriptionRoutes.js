@@ -8,6 +8,6 @@ router.post(
   prescriptionController.addMedicationsToPrescription
 );
 router.post("/add-notes", prescriptionController.addNotesToPrescription);
-router.get("/fetch-prescription/", prescriptionController.getPatientVisit);
+router.get("/fetch-prescription/", prescriptionController.fetchPrescription);
 
 module.exports = router;

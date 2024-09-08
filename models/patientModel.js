@@ -32,7 +32,7 @@ const patientSchema = mongoose.Schema({
   },
   visitHistory: [
     {
-      dateOfVisit: { type: Date, required: true }, // This will store both date and time
+      dateOfVisit: { type: Date, required: true },
       attendingPhysician: { type: String, required: true },
       prescriptions: { type: String },
     },
