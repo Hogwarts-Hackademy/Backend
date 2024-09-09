@@ -113,7 +113,7 @@ module.exports = {
       res.status(500).json({ error: error.message });
     }
   },
-  // Function to get all hospital profiles
+
   getAllHospitalProfiles: async (req, res) => {
     try {
       const profiles = await hospitalProfileCollection.find({});
@@ -123,6 +123,41 @@ module.exports = {
       res.status(500).json({
         error: "An error occurred while fetching hospital profiles.",
       });
+    }
+  },
+
+  addDepartment: async (req, res) => {
+    try {
+      const { hospitalID, departmentName, wards, opdRooms } = req.body; // Accept hospitalID in the body
+
+      // Validate input
+      if (!hospitalID || !departmentName || !wards || !opdRooms) {
+        return res.status(400).json({ error: "All fields are required." });
+      }
+
+      // Find the hospital profile by hospitalID
+      const hospital = await hospitalProfileCollection.findOne({ hospitalID });
+
+      if (!hospital) {
+        return res.status(404).json({ error: "Hospital profile not found." });
+      }
+
+      // Add department with ward and OPD information
+      hospital.infrastructure.departments.push({
+        name: departmentName,
+        wards,
+        opdRooms,
+      });
+
+      // Save the updated hospital profile
+      await hospital.save();
+
+      res.status(200).json({
+        message: `Department ${departmentName} added successfully.`,
+        hospital,
+      });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
   },
 };
