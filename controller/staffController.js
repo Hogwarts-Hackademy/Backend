@@ -1,176 +1,182 @@
 const { staffCollection } = require("../models/staffModel");
 const { hospitalProfileCollection } = require("../models/hospitalProfileModel");
+const { generateUniqueID } = require("../functions/idGenerator");
+
 module.exports = {
-  addStaff: async (req, res) => {
-    try {
-      const {
-        staffID,
-        fullName,
-        dateOfBirth,
-        gender,
-        contactInformation,
-        nationalID,
-        professionalDetails,
-        staffType,
-        hospitalID,
-      } = req.body;
+	addStaff: async (req, res) => {
+		try {
+			const staffID = await generateUniqueID("S");
 
-      const staff = await staffCollection.create({
-        staffID,
-        fullName,
-        dateOfBirth,
-        gender,
-        contactInformation,
-        nationalID,
-        professionalDetails,
-        staffType,
-        hospitalID,
-      });
+			const {
+				fullName,
+				dateOfBirth,
+				gender,
+				contactInformation,
+				nationalID,
+				professionalDetails,
+				staffType,
+				hospitalID,
+			} = req.body;
 
-      res.status(201).json(staff);
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-  },
+			const staff = await staffCollection.create({
+				staffID,
+				fullName,
+				dateOfBirth,
+				gender,
+				contactInformation,
+				nationalID,
+				professionalDetails,
+				staffType,
+				hospitalID,
+			});
 
-  getStaff: async (req, res) => {
-    try {
-      const { staffID } = req.query;
+			res.status(201).json(staff);
+		} catch (error) {
+			res.status(400).json({ error: error.message });
+		}
+	},
 
-      if (!staffID) {
-        return res.status(400).json({
-          error: "Staff ID is required to fetch staff details.",
-        });
-      }
+	getStaff: async (req, res) => {
+		try {
+			const { staffID } = req.query;
 
-      const staff = await staffCollection.findOne({ staffID });
+			if (!staffID) {
+				return res.status(400).json({
+					error: "Staff ID is required to fetch staff details.",
+				});
+			}
 
-      if (!staff) {
-        return res.status(404).json({ error: "Staff not found." });
-      }
+			const staff = await staffCollection.findOne({ staffID });
 
-      // Only returning relevant fields including scheduling information if present
-      res.status(200).json({
-        fullName: staff.fullName,
-        department: staff.professionalDetails.department,
-        hospitalID: staff.hospitalID,
-        staffType: staff.staffType,
-        scheduling: staff.scheduling || null,
-      });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
+			if (!staff) {
+				return res.status(404).json({ error: "Staff not found." });
+			}
 
-  addSchedulingToStaff: async (req, res) => {
-    try {
-      const { staffID, scheduling } = req.body;
+			// Only returning relevant fields including scheduling information if present
+			res.status(200).json(staff);
+		} catch (error) {
+			res.status(500).json({ error: error.message });
+		}
+	},
 
-      const staff = await staffCollection.findOneAndUpdate(
-        { staffID },
-        { $set: { scheduling } },
-        { new: true, upsert: true }
-      );
+	addSchedulingToStaff: async (req, res) => {
+		try {
+			const { staffID, scheduling } = req.body;
 
-      if (!staff) {
-        return res.status(404).json({ error: "Staff not found." });
-      }
+			const staff = await staffCollection.findOneAndUpdate(
+				{ staffID },
+				{ $set: { scheduling } },
+				{ new: true, upsert: true }
+			);
 
-      res.status(200).json({ data: staff });
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-  },
+			if (!staff) {
+				return res.status(404).json({ error: "Staff not found." });
+			}
 
-  getScheduling: async (req, res) => {
-    try {
-      const { staffID } = req.query;
+			res.status(200).json({ data: staff });
+		} catch (error) {
+			res.status(400).json({ error: error.message });
+		}
+	},
 
-      if (!staffID) {
-        return res.status(400).json({
-          error: "Staff ID is required to fetch the schedule.",
-        });
-      }
+	getScheduling: async (req, res) => {
+		try {
+			const { staffID } = req.query;
 
-      const staff = await staffCollection.findOne({ staffID });
+			if (!staffID) {
+				return res.status(400).json({
+					error: "Staff ID is required to fetch the schedule.",
+				});
+			}
 
-      if (!staff) {
-        return res.status(404).json({ error: "Staff not found." });
-      }
+			const staff = await staffCollection.findOne({ staffID });
 
-      res.status(200).json({
-        schedule: staff.scheduling || null, // Return schedule if available
-      });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
+			if (!staff) {
+				return res.status(404).json({ error: "Staff not found." });
+			}
 
-  getDoctorByFilter: async (req, res) => {
-    try {
-      const { name, department, hospital, city } = req.query;
+			res.status(200).json({
+				schedule: staff.scheduling || null, // Return schedule if available
+			});
+		} catch (error) {
+			res.status(500).json({ error: error.message });
+		}
+	},
 
-      // Build the query object with case-insensitive partial matching
-      let query = {
-        "professionalDetails.jobTitle": "Doctor", // Only search for doctors
-      };
+	getDoctorByFilter: async (req, res) => {
+		try {
+			const { name, department, hospital, city } = req.query;
 
-      if (name) {
-        query.fullName = { $regex: name, $options: "i" }; // Partial and case-insensitive name search
-      }
-      if (department) {
-        query["professionalDetails.department"] = {
-          $regex: department,
-          $options: "i",
-        }; // Partial department match
-      }
-      if (hospital) {
-        // Fetch hospitals matching the partial hospital name
-        const matchedHospitals = await hospitalProfileCollection.find({
-          name: { $regex: hospital, $options: "i" },
-        });
+			// Build the query object with case-insensitive partial matching
+			let query = {
+				"professionalDetails.jobTitle": "Doctor", // Only search for doctors
+			};
 
-        // Extract hospital IDs from matched hospitals
-        const hospitalIDs = matchedHospitals.map((hosp) => hosp.hospitalID);
+			if (name) {
+				query.fullName = { $regex: name, $options: "i" }; // Partial and case-insensitive name search
+			}
+			if (department) {
+				query["professionalDetails.department"] = {
+					$regex: department,
+					$options: "i",
+				}; // Partial department match
+			}
+			if (hospital) {
+				// Fetch hospitals matching the partial hospital name
+				const matchedHospitals = await hospitalProfileCollection.find({
+					name: { $regex: hospital, $options: "i" },
+				});
 
-        // Add hospital ID filter if any hospitals were found
-        if (hospitalIDs.length > 0) {
-          query.hospitalID = { $in: hospitalIDs };
-        } else {
-          return res.status(404).json({ error: "No matching hospitals found" });
-        }
-      }
-      if (city) {
-        query["contactInformation.address"] = { $regex: city, $options: "i" }; // Partial city match
-      }
+				// Extract hospital IDs from matched hospitals
+				const hospitalIDs = matchedHospitals.map(
+					(hosp) => hosp.hospitalID
+				);
 
-      // Find doctors based on the query
-      const doctors = await staffCollection
-        .find(query)
-        .select("fullName hospitalID professionalDetails.department");
+				// Add hospital ID filter if any hospitals were found
+				if (hospitalIDs.length > 0) {
+					query.hospitalID = { $in: hospitalIDs };
+				} else {
+					return res
+						.status(404)
+						.json({ error: "No matching hospitals found" });
+				}
+			}
+			if (city) {
+				query["contactInformation.address"] = {
+					$regex: city,
+					$options: "i",
+				}; // Partial city match
+			}
 
-      // Fetch hospital names for each doctor based on hospitalID
-      const hospitalIds = [...new Set(doctors.map((doc) => doc.hospitalID))];
-      const hospitals = await hospitalProfileCollection
-        .find({ hospitalID: { $in: hospitalIds } })
-        .select("hospitalID name");
+			// Find doctors based on the query
+			const doctors = await staffCollection
+				.find(query)
+				.select("fullName hospitalID professionalDetails.department");
 
-      // Create a map for hospital names by their hospitalID
-      const hospitalMap = hospitals.reduce((acc, hosp) => {
-        acc[hosp.hospitalID] = hosp.name;
-        return acc;
-      }, {});
+			// Fetch hospital names for each doctor based on hospitalID
+			const hospitalIds = [
+				...new Set(doctors.map((doc) => doc.hospitalID)),
+			];
+			const hospitals = await hospitalProfileCollection
+				.find({ hospitalID: { $in: hospitalIds } })
+				.select("hospitalID name");
 
-      // Format the response to include the doctor's name, hospital name, and department
-      const response = doctors.map((doc) => ({
-        name: doc.fullName,
-        hospitalName: hospitalMap[doc.hospitalID] || "Unknown",
-        department: doc.professionalDetails.department,
-      }));
+			// Create a map for hospital names by their hospitalID
+			const hospitalMap = hospitals.reduce((acc, hosp) => {
+				acc[hosp.hospitalID] = hosp.name;
+				return acc;
+			}, {});
 
-      res.status(200).json({ data: response });
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-  },
+			// Format the response to include the doctor's name, hospital name, and department
+			const response = doctors.map((doc) => ({
+				name: doc.fullName,
+				hospitalName: hospitalMap[doc.hospitalID] || "Unknown",
+				department: doc.professionalDetails.department,
+			}));
+
+			res.status(200).json({ data: response });
+		} catch (error) {
+			res.status(400).json({ error: error.message });
+		}
+	},
 };
