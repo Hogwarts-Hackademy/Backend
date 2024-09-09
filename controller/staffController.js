@@ -1,6 +1,6 @@
 const { staffCollection } = require("../models/staffModel");
 const { hospitalProfileCollection } = require("../models/hospitalProfileModel");
-const { generateUniqueID } = require("../functions/idGenerator");
+const { generateUniqueID } = require("../helper/idGenerator");
 
 module.exports = {
 	addStaff: async (req, res) => {
