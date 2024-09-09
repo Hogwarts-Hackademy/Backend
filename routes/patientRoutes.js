@@ -8,4 +8,6 @@ router.get("/fetchone", patientController.getPatient);
 
 router.get("/fetchall", patientController.getAllPatients);
 
+router.get("/get-visithistory", patientController.fetchPatientVisits);
+
 module.exports = router;

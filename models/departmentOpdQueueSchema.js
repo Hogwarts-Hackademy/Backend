@@ -28,6 +28,4 @@ const departmentQueueCollection = mongoose.model(
   departmentQueueSchema
 );
 
-module.exports = {
-  departmentQueueCollection,
-};
+module.exports = { departmentQueueCollection };

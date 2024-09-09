@@ -1,11 +1,12 @@
 const { hospitalProfileCollection } = require("../models/hospitalProfileModel");
+const { generateUniqueID } = require("../functions/idGenerator");
 
 module.exports = {
 	createHospitalProfile: async (req, res) => {
 		try {
-			// Destructure and validate required fields
+			const hospitalID = await generateUniqueID("H");
+
 			const {
-				hospitalID,
 				name,
 				location,
 				contactInformation,
@@ -89,6 +90,32 @@ module.exports = {
 		}
 	},
 
+	getHospitalBySearch: async (req, res) => {
+		try {
+			const { search } = req.query;
+
+			// Build the search filter
+			const filter = {};
+
+			if (search) {
+				const searchRegex = new RegExp(search, "i"); // Case-insensitive regex for better matching
+				filter.$or = [
+					{ name: searchRegex }, // Search by hospital name
+					{ location: searchRegex }, // Search by location
+				];
+			}
+
+			// Query the database with the filter and select only required fields
+			const hospitals = await hospitalProfileCollection
+				.find(filter)
+				.select("name location contactInformation.phone");
+
+			// Return the list of hospitals
+			res.status(200).json({ data: hospitals });
+		} catch (error) {
+			res.status(500).json({ error: error.message });
+		}
+	},
 	// Function to get all hospital profiles
 	getAllHospitalProfiles: async (req, res) => {
 		try {
