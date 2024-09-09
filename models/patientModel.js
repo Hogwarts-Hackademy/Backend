@@ -32,9 +32,9 @@ const patientSchema = mongoose.Schema({
   },
   visitHistory: [
     {
-      dateOfVisit: Date,
-      attendingPhysician: String,
-      prescriptions: String,
+      dateOfVisit: { type: Date, required: true },
+      attendingPhysician: { type: String, required: true },
+      prescriptions: { type: String },
     },
   ],
 });

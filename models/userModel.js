@@ -1,10 +1,16 @@
 const mongoose = require("mongoose");
 
-const userSchema = mongoose.Schema({
-  username: { type: String, required: true },
-  password: { type: String, required: true },
-  role: { type: String, default: "user" },
-});
+const userSchema = new mongoose.Schema(
+	{
+		name: { type: String, required: true }, // Store the user's name
+		email: { type: String, required: true, unique: true },
+		password: { type: String, required: true },
+		otp: { type: String },
+		otpExpiry: { type: Date },
+		isVerified: { type: Boolean, default: false },
+	},
+	{ timestamps: true }
+);
 
 const userCollection = mongoose.model("users", userSchema);
 

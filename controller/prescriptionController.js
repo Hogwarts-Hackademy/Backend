@@ -1,12 +1,14 @@
 const { prescriptionCollection } = require("../models/prescriptionModel");
+const moment = require("moment-timezone");
 
 // Add tests to an existing prescription
+// Add tests to an existing prescription using prescriptionID
 module.exports.addTestsToPrescription = async (req, res) => {
   try {
-    const { patientId, tests } = req.body;
+    const { prescriptionID, tests } = req.body;
 
     const prescription = await prescriptionCollection.findOneAndUpdate(
-      { patientId },
+      { prescriptionID },
       { $push: { tests: { $each: tests } } },
       { new: true }
     );
@@ -14,7 +16,7 @@ module.exports.addTestsToPrescription = async (req, res) => {
     if (!prescription) {
       return res
         .status(404)
-        .json({ error: "Prescription not found for the patient" });
+        .json({ error: "Prescription not found with the given ID" });
     }
 
     res.status(200).json({ data: prescription });
@@ -23,13 +25,13 @@ module.exports.addTestsToPrescription = async (req, res) => {
   }
 };
 
-// Add medications to an existing prescription
+// Add medications to an existing prescription using prescriptionID
 module.exports.addMedicationsToPrescription = async (req, res) => {
   try {
-    const { patientId, medications } = req.body;
+    const { prescriptionID, medications } = req.body;
 
     const prescription = await prescriptionCollection.findOneAndUpdate(
-      { patientId },
+      { prescriptionID },
       { $push: { medications: { $each: medications } } },
       { new: true }
     );
@@ -37,7 +39,7 @@ module.exports.addMedicationsToPrescription = async (req, res) => {
     if (!prescription) {
       return res
         .status(404)
-        .json({ error: "Prescription not found for the patient" });
+        .json({ error: "Prescription not found with the given ID" });
     }
 
     res.status(200).json({ data: prescription });
@@ -46,21 +48,21 @@ module.exports.addMedicationsToPrescription = async (req, res) => {
   }
 };
 
-// Add doctor's notes to an existing prescription
+// Add doctor's notes to an existing prescription using prescriptionID
 module.exports.addNotesToPrescription = async (req, res) => {
   try {
-    const { patientId, notes } = req.body;
+    const { prescriptionID, notes } = req.body;
 
     const prescription = await prescriptionCollection.findOneAndUpdate(
-      { patientId },
-      { $push: { doctorNotes: notes } },
+      { prescriptionID },
+      { $push: { doctorNotes: { $each: notes } } },
       { new: true }
     );
 
     if (!prescription) {
       return res
         .status(404)
-        .json({ error: "Prescription not found for the patient" });
+        .json({ error: "Prescription not found with the given ID" });
     }
 
     res.status(200).json({ data: prescription });
@@ -69,15 +71,25 @@ module.exports.addNotesToPrescription = async (req, res) => {
   }
 };
 
+const adjustToIST = (date) => {
+  return moment(date).tz("Asia/Kolkata").format(); // Convert to IST and format as ISO string
+};
+
 // Get a specific prescription by patient ID
-module.exports.getPrescriptionByPatientId = async (req, res) => {
+module.exports.fetchPrescription = async (req, res) => {
   try {
-    const { patientId } = req.params;
-    const prescription = await prescriptionCollection.findOne({ patientId });
+    const { prescriptionID } = req.query;
+
+    // Fetch the prescription by prescriptionID
+    const prescription = await prescriptionCollection.findOne({
+      prescriptionID,
+    });
 
     if (!prescription) {
       return res.status(404).json({ error: "Prescription not found" });
     }
+
+    prescription.visitDate = adjustToIST(prescription.visitDate);
 
     res.status(200).json({ data: prescription });
   } catch (error) {

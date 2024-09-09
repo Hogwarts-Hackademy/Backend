@@ -7,8 +7,16 @@ router.post(
   hospitalProfileController.createHospitalProfile
 );
 
-router.get("/hospital-profiles/fetchone", hospitalProfileController.getHospitalProfile);
+router.get(
+  "/hospital-profiles/fetchone",
+  hospitalProfileController.getHospitalProfile
+);
 
-router.get("/hospital-profiles/fetchall", hospitalProfileController.getAllHospitalProfiles);
+router.get(
+  "/hospital-profiles/fetchall",
+  hospitalProfileController.getAllHospitalProfiles
+);
+
+router.get("/search", hospitalProfileController.getHospitalBySearch);
 
 module.exports = router;
