@@ -107,7 +107,6 @@ module.exports.addPatientVisit = async (req, res) => {
 };
 
 // Function to fetch current and next token number details
-// Function to fetch the current and next token details
 module.exports.fetchQueueDetails = async (req, res) => {
   try {
     const { department } = req.query;
