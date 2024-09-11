@@ -1,6 +1,6 @@
 const { patientCollection } = require("../models/patientModel");
-const { convertToIST } = require("../functions/timestampConverter");
-const { generateUniqueID } = require("../functions/idGenerator");
+const { convertToIST } = require("../helper/timestampConverter");
+const { generateUniqueID } = require("../helper/idGenerator");
 
 module.exports = {
 	// Function to create a new patient
@@ -59,12 +59,12 @@ module.exports = {
 			const patients = await patientCollection.find();
 
 			// Remove visitHistory from each patient object
-			const updatedPatients = patients.map((patient) => {
+			/* const updatedPatients = patients.map((patient) => {
 				const { visitHistory, ...patientData } = patient.toObject();
 				return patientData;
-			});
+			}); */
 
-			res.status(200).json(updatedPatients);
+			res.status(200).json(patients);
 		} catch (error) {
 			res.status(500).json({
 				error: "An error occurred while fetching patient details.",

@@ -1,10 +1,11 @@
 const moment = require("moment-timezone");
+const { v4: uuidv4 } = require("uuid");
 const { patientCollection } = require("../models/patientModel");
 const { prescriptionCollection } = require("../models/prescriptionModel");
 const {
   departmentQueueCollection,
 } = require("../models/departmentOpdQueueSchema");
-const { convertToIST } = require("../functions/timestampConverter");
+const { convertToIST } = require("../helper/timestampConverter");
 
 // Function to generate a token for the department
 const generateTokenForDepartment = async (department) => {
@@ -55,7 +56,11 @@ module.exports.addPatientVisit = async (req, res) => {
     const tokenNumber = await generateTokenForDepartment(department);
     const physician = await assignPhysician(department);
 
+    // Generate a unique prescription ID using uuid
+    const prescriptionID = uuidv4();
+
     const newPrescription = {
+      prescriptionID: prescriptionID,
       patientId: patient._id,
       patientName: patient.fullName,
       visitDate,
@@ -102,7 +107,6 @@ module.exports.addPatientVisit = async (req, res) => {
 };
 
 // Function to fetch current and next token number details
-// Function to fetch the current and next token details
 module.exports.fetchQueueDetails = async (req, res) => {
   try {
     const { department } = req.query;

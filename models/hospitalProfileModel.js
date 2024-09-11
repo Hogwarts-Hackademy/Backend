@@ -24,7 +24,18 @@ const hospitalProfileSchema = new mongoose.Schema({
       pediatricBeds: { type: Number },
       isolationBeds: { type: Number },
     },
-    departments: [{ type: String }],
+    departments: [
+      {
+        name: { type: String, required: true }, // Department name
+        wards: [
+          {
+            wardNumber: { type: Number, required: true }, // Ward identifier
+            beds: { type: Number, required: true }, // Number of beds in the ward
+          },
+        ],
+        opdRooms: { type: Number, required: true }, // Number of OPD rooms in the department
+      },
+    ],
     specializedUnits: [{ type: String }],
     diagnosticFacilities: [{ type: String }],
     operationTheaters: [{ type: String }],
