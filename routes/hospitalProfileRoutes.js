@@ -19,4 +19,6 @@ router.get(
 
 router.get("/search", hospitalProfileController.getHospitalBySearch);
 
+router.post("/add-department", hospitalProfileController.addDepartment);
+
 module.exports = router;
