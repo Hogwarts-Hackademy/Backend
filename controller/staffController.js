@@ -6,6 +6,7 @@ module.exports = {
 	addStaff: async (req, res) => {
 		try {
 			const staffID = await generateUniqueID("S");
+			const hospitalID = "H001";
 
 			const {
 				fullName,
@@ -15,7 +16,6 @@ module.exports = {
 				nationalID,
 				professionalDetails,
 				staffType,
-				hospitalID,
 			} = req.body;
 
 			const staff = await staffCollection.create({
@@ -30,6 +30,16 @@ module.exports = {
 				hospitalID,
 			});
 
+			if (
+				!fullName ||
+				!dateOfBirth ||
+				!gender ||
+				!contactInformation.phone
+			) {
+				return res
+					.status(400)
+					.json({ error: "Missing required fields" });
+			}
 			res.status(201).json(staff);
 		} catch (error) {
 			res.status(400).json({ error: error.message });
